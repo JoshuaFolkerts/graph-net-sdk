@@ -1,4 +1,5 @@
 ﻿using EPiServer.ContentGraph.Helpers;
+using EPiServer.ContentGraph.Helpers.Text;
 using GraphQL.Transport;
 using System;
 
@@ -7,12 +8,16 @@ namespace EPiServer.ContentGraph.Api.Querying
     public abstract class BaseTypeQueryBuilder : ITypeQueryBuilder
     {
         protected readonly ContentGraphQuery graphObject;
+
         protected readonly GraphQLRequest _query;
+
         protected bool _compiled = false;
+
         protected IQuery _parent = null;
+
         public virtual IQuery Parent
         {
-            get => _parent; 
+            get => _parent;
             set
             {
                 if (_parent.IsNull())
@@ -27,6 +32,7 @@ namespace EPiServer.ContentGraph.Api.Querying
             graphObject = new ContentGraphQuery();
             _query = new GraphQLRequest();
         }
+
         public BaseTypeQueryBuilder(GraphQLRequest query)
         {
             graphObject = new ContentGraphQuery();
@@ -67,6 +73,7 @@ namespace EPiServer.ContentGraph.Api.Querying
 
             return this;
         }
+
         public virtual BaseTypeQueryBuilder Link(BaseTypeQueryBuilder link)
         {
             link.ValidateNotNullArgument("link");
@@ -74,11 +81,26 @@ namespace EPiServer.ContentGraph.Api.Querying
             if (!linkItems.IsNullOrEmpty())
             {
                 graphObject.SelectItems += graphObject.SelectItems.IsNullOrEmpty() ?
-                    $"_link{{{linkItems}}}" :
-                    $" _link{{{linkItems}}}";
+                        $"_link{{{linkItems}}}" :
+                        $" _link{{{linkItems}}}";
             }
             return this;
         }
+
+        public virtual BaseTypeQueryBuilder Link(BaseTypeQueryBuilder link, string linkType)
+        {
+            link.ValidateNotNullArgument("link");
+            link.ValidateNotNullOrEmptyArgument("linkType");
+            string linkItems = link.GetQuery()?.Query ?? string.Empty;
+            if (!linkItems.IsNullOrEmpty())
+            {
+                graphObject.SelectItems += graphObject.SelectItems.IsNullOrEmpty() ?
+                    $"_link (type:{linkType}){{{linkItems}}}" :
+                    $" _link (type:{linkType}){{{linkItems}}}";
+            }
+            return this;
+        }
+
         [Obsolete("Use Link method instead")]
         public virtual BaseTypeQueryBuilder Children(BaseTypeQueryBuilder children)
         {
@@ -93,6 +115,7 @@ namespace EPiServer.ContentGraph.Api.Querying
 
             return this;
         }
+
         public virtual BaseTypeQueryBuilder Fragments(params FragmentBuilder[] fragments)
         {
             fragments.ValidateNotNullArgument("fragments");
@@ -102,6 +125,7 @@ namespace EPiServer.ContentGraph.Api.Querying
             }
             return this;
         }
+
         protected virtual BaseTypeQueryBuilder Fragment(FragmentBuilder fragment)
         {
             fragment.ValidateNotNullArgument("fragment");
