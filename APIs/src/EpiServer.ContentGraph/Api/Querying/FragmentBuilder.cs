@@ -9,17 +9,22 @@ namespace EPiServer.ContentGraph.Api.Querying
 {
     public class FragmentBuilder<T> : FragmentBuilder
     {
-        public FragmentBuilder() : base() { }
+        public FragmentBuilder() : base()
+        {
+        }
+
         public FragmentBuilder(string name)
         {
             _query.OperationName = name;
         }
+
         private FragmentBuilder<T> Field(Expression<Func<T, object>> fieldSelector)
         {
             fieldSelector.ValidateNotNullArgument("fieldSelector");
             base.Field(fieldSelector.GetFieldPath());
             return this;
         }
+
         public FragmentBuilder<T> Fields(params Expression<Func<T, object>>[] fieldSelectors)
         {
             fieldSelectors.ValidateNotNullArgument("fieldSelectors");
@@ -29,16 +34,25 @@ namespace EPiServer.ContentGraph.Api.Querying
             }
             return this;
         }
+
         public FragmentBuilder<T> Link<TLink>(TypeQueryBuilder<TLink> link)
         {
             base.Link(link);
             return this;
         }
+
+        public FragmentBuilder<T> Link<TLink>(TypeQueryBuilder<TLink> link, string linkType)
+        {
+            base.Link(link, linkType);
+            return this;
+        }
+
         public FragmentBuilder<T> Children<TChildren>(TypeQueryBuilder<TChildren> children)
         {
             base.Children(children);
             return this;
         }
+
         public override GraphQLRequest GetQuery()
         {
             _query.Query = $"fragment {_query.OperationName} on {typeof(T).Name} {graphObject}";
@@ -52,6 +66,7 @@ namespace EPiServer.ContentGraph.Api.Querying
         {
             _query.OperationName = "sampleFragment";
         }
+
         public void OperationName(string name)
         {
             Regex reg = new Regex(@"^[a-zA-Z_]\w*$");
@@ -60,6 +75,7 @@ namespace EPiServer.ContentGraph.Api.Querying
                 _query.OperationName = name;
             }
         }
+
         public string GetName()
         {
             return _query.OperationName;
