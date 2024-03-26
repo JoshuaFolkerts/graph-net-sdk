@@ -47,6 +47,7 @@ namespace EPiServer.ContentGraph.Api.Querying
             return this;
         }
 
+        [Obsolete("Obsoleted. Use Link instead")]
         public FragmentBuilder<T> Children<TChildren>(TypeQueryBuilder<TChildren> children)
         {
             base.Children(children);
@@ -62,6 +63,12 @@ namespace EPiServer.ContentGraph.Api.Querying
 
     public class FragmentBuilder : BaseTypeQueryBuilder
     {
+        private List<FragmentBuilder> _childrenFragments;
+
+        public IEnumerable<FragmentBuilder> ChildrenFragments => _childrenFragments;
+
+        public bool HasChildren => _childrenFragments != null && _childrenFragments.Any();
+
         public FragmentBuilder() : base()
         {
             _query.OperationName = "sampleFragment";
@@ -79,6 +86,20 @@ namespace EPiServer.ContentGraph.Api.Querying
         public string GetName()
         {
             return _query.OperationName;
+        }
+
+        public override FragmentBuilder Fragments(params FragmentBuilder[] fragments)
+        {
+            if (fragments.IsNotNull() && fragments.Length > 0)
+            {
+                if (_childrenFragments.IsNull())
+                {
+                    _childrenFragments = new List<FragmentBuilder>();
+                }
+                base.Fragments(fragments);
+                _childrenFragments.AddRange(fragments);
+            }
+            return this;
         }
     }
 }
