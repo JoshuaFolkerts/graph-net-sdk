@@ -87,16 +87,17 @@ namespace EPiServer.ContentGraph.Api.Querying
             return this;
         }
 
-        public virtual BaseTypeQueryBuilder Link(BaseTypeQueryBuilder link, string linkType)
+        public virtual BaseTypeQueryBuilder Link(BaseTypeQueryBuilder link, LinkOption linkOption)
         {
-            link.ValidateNotNullArgument("link");
-            link.ValidateNotNullOrEmptyArgument("linkType");
+            link.ValidateNotNullArgument(nameof(link));
+            linkOption.ValidateNotNullOrEmptyArgument(nameof(linkOption));
+
             string linkItems = link.GetQuery()?.Query ?? string.Empty;
             if (!linkItems.IsNullOrEmpty())
             {
                 graphObject.SelectItems += graphObject.SelectItems.IsNullOrEmpty() ?
-                    $"_link (type:{linkType}){{{linkItems}}}" :
-                    $" _link (type:{linkType}){{{linkItems}}}";
+                    $"{linkOption.Alias}: _link (type:{linkOption.LinkType}){{{linkItems}}}" :
+                    $" {linkOption.Alias}:_link (type:{linkOption.LinkType}){{{linkItems}}}";
             }
             return this;
         }

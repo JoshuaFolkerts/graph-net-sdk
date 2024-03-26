@@ -41,9 +41,9 @@ namespace EPiServer.ContentGraph.Api.Querying
             return this;
         }
 
-        public SubTypeQueryBuilder<T> Link<TLink>(TypeQueryBuilder<TLink> link, string linkType = null)
+        public SubTypeQueryBuilder<T> Link<TLink>(TypeQueryBuilder<TLink> link, LinkOption linkOption)
         {
-            base.Link(link, linkType);
+            base.Link(link, linkOption);
             return this;
         }
 

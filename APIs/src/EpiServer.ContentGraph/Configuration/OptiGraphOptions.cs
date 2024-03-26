@@ -17,6 +17,7 @@ namespace EPiServer.ContentGraph.Configuration
             SingleKey = key;
             AppKey = appKey;
         }
+
         public OptiGraphOptions()
         {
             UseHmacKey = true;
@@ -25,14 +26,17 @@ namespace EPiServer.ContentGraph.Configuration
             SingleKey = string.Empty;
             AppKey = string.Empty;
         }
+
         /// <summary>
         /// Flag to mark that request should use HMAC key. Default to true.
         /// </summary>
         public bool UseHmacKey { get; set; }
+
         /// <summary>
         /// Override the value of enabled cache on CG. Default to true.
         /// </summary>
         public bool Cache { get; set; } = true;
+
         [Required(AllowEmptyStrings = false)]
         public string GatewayAddress { get; set; }
 
@@ -46,6 +50,7 @@ namespace EPiServer.ContentGraph.Configuration
         public string AppKey { get; set; }
 
         public string QueryPath { get; set; } = "content/v2";
+
         public string Authorization
         {
             get
